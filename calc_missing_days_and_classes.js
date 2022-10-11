@@ -167,8 +167,8 @@ function message() {
   <p> Total days so far: ${total_days} </p>
   <p> ${delay_advance}: ${delay_advance_days} classes </p>
   <br>
-  <p> Missing: ${missing_days} days (average: 8) </p>
-  <p> Missing: ${missing_week} weeks (average: 8) </p>
+  <p> Missing: ${missing_days} days (average: ${class_goal_per_day}) </p>
+  <p> Missing: ${missing_week} weeks (average: ${class_goal_per_day}) </p>
   <br>
   <p> OR </p>
   <br>
