@@ -1,0 +1,167 @@
+@import url("https://fonts.googleapis.com/css2?family=Karla:wght@500;600&display=swap");
+
+:root {
+  --background-site: #1b0410;
+  --background-container: #011a44;
+
+  --class-done: #003e1f;
+  --class-not-done: #6b0504;
+  --week-text: #30042a;
+
+  --01: #f3f3f3;
+  --02: #050505;
+
+  --font-family-title: "Karla", sans-serif;
+  --font-weight-title: 600;
+
+  --font-family-text: "Karla", sans-serif;
+  --font-weight-text: 500;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  background-color: var(--background-site);
+}
+
+main {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 1vw;
+}
+
+.container-classes {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.container-data {
+  margin-top: 20px;
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  box-sizing: border-box;
+  background-color: var(--background-container);
+  color: var(--01);
+  font-family: var(--font-family-text);
+  font-weight: var(--font-weight-text);
+  border-radius: 15px;
+  border: 3px solid var(--01);
+  padding: 30px 20px;
+}
+
+@media (max-width: 900px) {
+  .container-classes {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 15px;
+    max-width: 600px;
+    margin: 0 auto;
+  }
+  .container-data {
+    max-width: 600px;
+    margin: 20px auto 0 auto;
+  }
+  main {
+    padding: 3vw;
+  }
+}
+
+.week {
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+  background-color: var(--background-container);
+  border-radius: 15px;
+  border: 3px solid var(--01);
+  padding: 30px 20px;
+}
+
+.week h1 {
+  font-family: var(--font-family-title);
+  color: var(--01);
+  text-align: center;
+  font-weight: var(--font-weight-title);
+  font-size: 32px;
+}
+
+.week h1:after {
+  content: "";
+  display: block;
+  width: 50%;
+  min-width: 140px;
+  height: 2px;
+  background-color: var(--01);
+  margin: 5px auto 10px auto;
+}
+
+.week h2 {
+  text-align: center;
+  background-color: var(--class-done);
+  width: 50%;
+  margin: 10px auto 0 auto;
+  padding: 4px 0;
+  border: 2px solid var(--02);
+  border-radius: 12px;
+  color: var(--01);
+  font-family: var(--font-family-title);
+  font-weight: var(--font-weight-title);
+  font-size: 22px;
+}
+
+.week h2.red {
+  background-color: var(--class-not-done);
+}
+
+.week .day {
+  display: flex;
+}
+
+.week .day:not(:first-child) {
+  margin-top: 10px;
+}
+
+.week .day p {
+  box-sizing: border-box;
+  background-color: var(--week-text);
+  font-family: var(--font-family-text);
+  font-weight: var(--font-weight-text);
+  color: var(--01);
+  font-size: 14px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: Calc(7.69% * 3);
+}
+
+.week .day p:first-child {
+  border-top: 2px solid var(--02);
+  border-bottom: 2px solid var(--02);
+  border-right: 1px solid var(--02);
+  border-left: 2px solid var(--02);
+}
+
+.week .day p:last-child {
+  border-top: 2px solid var(--02);
+  border-bottom: 2px solid var(--02);
+  border-right: 2px solid var(--02);
+  border-left: 1px solid var(--02);
+}
+
+.week .day .square {
+  box-sizing: border-box;
+  width: 7.69%;
+  border-top: 2px solid var(--02);
+  border-bottom: 2px solid var(--02);
+  border-right: 1px solid var(--02);
+  border-left: 1px solid var(--02);
+  background-color: var(--class-done);
+}
+
+.week .day .square.red {
+  background-color: var(--class-not-done);
+}
