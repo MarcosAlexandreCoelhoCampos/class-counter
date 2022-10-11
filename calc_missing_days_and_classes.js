@@ -32,6 +32,8 @@ import {
 total_days = total_classes_per_day.length;
 
 calc_average();
+message();
+
 let doit;
 window.onresize = () => {
   clearTimeout(doit);
@@ -40,7 +42,6 @@ window.onresize = () => {
 
 function reset() {
   container_classes.innerHTML = "";
-  container_data.innerHTML = "";
   total_classes = 0;
   average = 0;
   missing_classes = 0;
@@ -107,7 +108,6 @@ function base_squares() {
   });
   style_squares();
   total_class_week();
-  message();
 }
 
 function new_week() {
@@ -168,7 +168,7 @@ function message() {
   <p> ${delay_advance}: ${delay_advance_days} classes </p>
   <br>
   <p> Missing: ${missing_days} days (average: ${class_goal_per_day}) </p>
-  <p> Missing: ${missing_week} weeks (average: ${class_goal_per_day}) </p>
+  <p> Missing: ${missing_week} weeks (average: ${class_goal_per_day})) </p>
   <br>
   <p> OR </p>
   <br>
