@@ -1,37 +1,56 @@
-let total_classes = 0;
-let average = 0;
-let missing_classes = 0;
-let missing_days = 0;
-let missing_week = 0;
-let missing_days_average = 0;
-let missing_week_average = 0;
-let days = 0;
-let last_day = 0;
-let total_days = 0;
-let delay_advance = "";
-let delay_advance_days = 0;
-let weeks = 0;
-let total_videos_day = 0;
-let squares = "";
-let block_width_percentage = 0;
-let total_classes_week = 0;
-let x = 0;
-let container_days = 0;
-
 const container_classes = document.querySelector(".container-classes");
 const container_data = document.querySelector(".container-data");
 
 import total_classes_per_day from "./total_classes_per_day.js";
-
 import {
-  class_goal,
+  total_class_goal,
   class_goal_per_day,
   total_study_days_per_week,
 } from "./infos.js";
 
-total_days = total_classes_per_day.length;
+const total_days = total_classes_per_day.length;
 
-calc_average();
+const total_classes = total_classes_per_day
+  .map((classes_per_day) => classes_per_day.classes)
+  .reduce((classes, e) => classes + e);
+
+const average = () => (total_classes / total_days).toFixed(2);
+
+const missing_or_leftover = () => {
+  if (missing_classes > 0) {
+    return "Missing";
+  } else if (missing_classes === 0) {
+    return "Concluded";
+  } else {
+    return "Leftover";
+  }
+};
+
+const delay_advance_days = total_classes - total_days * class_goal_per_day;
+const missing_classes = total_class_goal - total_classes;
+const missing_days = Math.ceil(missing_classes / class_goal_per_day);
+const missing_week = missing_days / total_study_days_per_week;
+const missing_days_average = Math.ceil(missing_classes / average());
+const missing_week_average = missing_days_average / total_study_days_per_week;
+const class_goal_per_week = class_goal_per_day * total_study_days_per_week;
+
+const delay_advance = () => {
+  if (delay_advance_days < 0) {
+    return "Delay";
+  } else if (delay_advance_days === 0) {
+    return "Normal";
+  } else {
+    return "Advance";
+  }
+};
+
+const select_days = () => document.querySelectorAll(".day");
+const select_weeks = () => document.querySelectorAll(".week");
+const goal_checked = (conclusion, goal) => conclusion >= goal;
+const squares = () => document.querySelectorAll(".square");
+const squares_width = () => squares()[0].getBoundingClientRect().width;
+
+init_squares();
 message();
 
 let doit;
@@ -42,104 +61,43 @@ window.onresize = () => {
 
 function reset() {
   container_classes.innerHTML = "";
-  total_classes = 0;
-  average = 0;
-  missing_classes = 0;
-  missing_days = 0;
-  missing_week = 0;
-  missing_days_average = 0;
-  missing_week_average = 0;
-  days = 0;
-  last_day = 0;
-  total_days = 0;
-  delay_advance = "";
-  delay_advance_days = 0;
-  weeks = 0;
-  total_videos_day = 0;
-  squares = "";
-  block_width_percentage = 0;
-  total_classes_week = 0;
-  x = 0;
-  container_days = 0;
-  calc_average();
+  init_squares();
 }
 
-function calc_average() {
-  total_classes_per_day.forEach((e) => {
-    total_classes += +e.classes;
-    average = (total_classes / total_days).toFixed(2);
-  });
-  calc_missing();
-}
-
-function calc_missing() {
-  missing_classes = class_goal - total_classes;
-  missing_days = Math.ceil(missing_classes / class_goal_per_day);
-  missing_week = missing_days / total_study_days_per_week;
-  missing_days_average = Math.ceil(missing_classes / average);
-  missing_week_average = missing_days_average / total_study_days_per_week;
-  calc_delay_advance();
-}
-
-function calc_delay_advance() {
-  if (total_classes < total_days * class_goal_per_day) {
-    delay_advance = "Delay";
-  } else if (total_classes == total_days * class_goal_per_day) {
-    delay_advance = "Normal";
-  } else {
-    delay_advance = "Advance";
-  }
-  delay_advance_days = total_classes - total_days * class_goal_per_day;
-  base_squares();
-}
-
-function base_squares() {
-  total_classes_per_day.forEach((e) => {
-    new_week();
-    container_days = document.querySelectorAll(".container_days");
-    container_days[container_days.length - 1].innerHTML += '<div class="day">';
-    days = document.querySelectorAll(".day");
-    last_day = days[days.length - 1];
-    last_day.innerHTML += `<p> ${e.day} </p>`;
-    constructor_squares(e.classes);
-    total_videos_day =
-      e.classes - class_goal_per_day < 0 ? 0 : e.classes - class_goal_per_day;
-    last_day.innerHTML += `<p> +${total_videos_day} videos </p>`;
-  });
+function init_squares() {
+  total_classes_per_day.forEach(base_squares);
   style_squares();
-  total_class_week();
+  init_total_classes_week();
 }
 
-function new_week() {
-  if (days.length % total_study_days_per_week == 0 || days == 0) {
-    container_classes.innerHTML += '<div class="week">';
-    weeks = document.querySelectorAll(".week");
+function base_squares(e, i) {
+  new_week(i);
+  new_day();
+  let days = select_days();
+  let last_day = days[days.length - 1];
+  last_day.innerHTML += `<p> ${e.day} </p>`;
+  constructor_squares(e.classes, last_day);
+  const total_videos_day =
+    e.classes - class_goal_per_day < 0 ? 0 : e.classes - class_goal_per_day;
+  last_day.innerHTML += `<p> +${total_videos_day} videos </p>`;
+}
+
+function new_week(i) {
+  if (i % total_study_days_per_week == 0 || i == 0) {
+    container_classes.innerHTML += '<div class="week"></div>';
+    let weeks = select_weeks();
     weeks[weeks.length - 1].innerHTML += `<h1> WEEK ${weeks.length}</h1>`;
-    weeks[weeks.length - 1].innerHTML += '<div class="container_days">';
+    weeks[weeks.length - 1].innerHTML += '<div class="container_days"></div>';
   }
 }
 
-function total_class_week() {
-  x = -1;
-  total_classes_per_day.forEach((e, i) => {
-    total_classes_week += e.classes;
-    if ((+i + 1) % total_study_days_per_week === 0) {
-      x++;
-      constructor_total_class_week(x);
-      total_classes_week = 0;
-    }
-  });
+function new_day() {
+  let container_days = document.querySelectorAll(".container_days");
+  container_days[container_days.length - 1].innerHTML +=
+    '<div class="day"></div>';
 }
 
-function constructor_total_class_week(x) {
-  if (total_classes_week >= class_goal_per_day * total_study_days_per_week) {
-    weeks[x].innerHTML += `<h2> TOTAL: ${total_classes_week}</h2>`;
-  } else {
-    weeks[x].innerHTML += `<h2 class="red"> TOTAL: ${total_classes_week}</h2>`;
-  }
-}
-
-function constructor_squares(classes) {
+function constructor_squares(classes, last_day) {
   for (let i = 0; i < class_goal_per_day; i++) {
     if (classes - i > 0) {
       last_day.innerHTML += '<div class="square"></div>';
@@ -150,29 +108,47 @@ function constructor_squares(classes) {
 }
 
 function style_squares() {
-  squares = document.querySelectorAll(".square");
-  block_width_percentage = squares[0].getBoundingClientRect().width;
-  days.forEach((day) => {
+  select_days().forEach((day) => {
     day.childNodes.forEach((day_childs) => {
-      day_childs.style.height = block_width_percentage + "px";
+      day_childs.style.height = squares_width() + "px";
     });
   });
+}
+
+function init_total_classes_week() {
+  let x = -1;
+  let total_classes_week = 0;
+  total_classes_per_day.forEach((e, i) => {
+    total_classes_week += e.classes;
+    if ((+i + 1) % total_study_days_per_week === 0) {
+      x++;
+      constructor_total_class_week(x, total_classes_week);
+      total_classes_week = 0;
+    }
+  });
+}
+
+function constructor_total_class_week(x, total_classes_week) {
+  let weeks = select_weeks();
+  weeks[x].innerHTML += goal_checked(total_classes_week, class_goal_per_week)
+    ? `<h2> TOTAL: ${total_classes_week}</h2>`
+    : `<h2 class="red"> TOTAL: ${total_classes_week}</h2>`;
 }
 
 function message() {
   container_data.innerHTML += `
   <p> Total classes taken: ${total_classes} </p>
-  <p> Missing: ${missing_classes} classes </p>
+  <p> ${missing_or_leftover()}: ${Math.abs(missing_classes)} classes </p>
   <br>
   <p> Total days so far: ${total_days} </p>
-  <p> ${delay_advance}: ${delay_advance_days} classes </p>
+  <p> ${delay_advance()}: ${delay_advance_days} classes </p>
   <br>
   <p> Missing: ${missing_days} days (average: ${class_goal_per_day}) </p>
   <p> Missing: ${missing_week} weeks (average: ${class_goal_per_day})) </p>
   <br>
   <p> OR </p>
   <br>
-  <p> Missing: ${missing_days_average} days (average: ${average})  </p>
-  <p> Missing: ${missing_week_average} weeks (average: ${average})  </p>
+  <p> Missing: ${missing_days_average} days (average: ${average()})  </p>
+  <p> Missing: ${missing_week_average} weeks (average: ${average()})  </p>
   `;
 }
