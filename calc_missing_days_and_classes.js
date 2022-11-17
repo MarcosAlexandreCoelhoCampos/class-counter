@@ -50,6 +50,8 @@ const goal_checked = (conclusion, goal) => conclusion >= goal;
 const squares = () => document.querySelectorAll(".square");
 const squares_width = () => squares()[0].getBoundingClientRect().width;
 
+if (class_goal_per_day > 10) container_classes.classList += " one-column";
+
 init_squares();
 message();
 
@@ -137,7 +139,7 @@ function constructor_total_class_week(x, total_classes_week) {
 
 function message() {
   container_data.innerHTML += `
-  <p> Total classes taken: ${total_classes} </p>
+  <p> Total classes taken: ${total_classes + 217} </p>
   <p> ${missing_or_leftover()}: ${Math.abs(missing_classes)} classes </p>
   <br>
   <p> Total days so far: ${total_days} </p>
